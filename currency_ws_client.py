@@ -2,7 +2,7 @@ import asyncio
 import json
 from datetime import datetime, timedelta
 from aiohttp import ClientSession, ClientWebSocketResponse, WSMsgType
-from typing import TypedDict
+from typing import TypedDict, cast
 from currency_converter import CurrencyConverter
 
 
@@ -92,8 +92,9 @@ class CurrencyWebSocketClient:
                         await asyncio.wait(pending, return_when=asyncio.ALL_COMPLETED)
 
                         for task in done:
-                            if task.exception():
-                                raise task.exception()
+                            exception = task.exception()
+                            if exception:
+                                raise cast(BaseException, exception)
 
                 except Exception as e:
                     print(f"WebSocket connection failed: {e}. Retrying in 1 second...")
