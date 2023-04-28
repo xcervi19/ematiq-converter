@@ -115,18 +115,13 @@ async def test_process_message(mocker: MockerFixture) -> None:
 
 
 @pytest.mark.asyncio
-async def test_fetch_exchange_rate_error(currency_converter, mocker):
-    mock_response = AsyncMock()
-    mock_response.status = 500
-    mock_response.reason = "Server error"
-    mocker.patch(
-        "currency_converter.ClientSession.get",
-        new_callable=AsyncMock,
-        return_value=mock_response,
-    )
+async def test_fetch_exchange_rate_error(currency_converter):
+    with aioresponses() as mocked:
+        mocked.get('', status=500)
 
-    with pytest.raises(Exception):
-        await currency_converter.fetch_exchange_rate("2023-04-27", "USD")
+        with pytest.raises(Exception):
+            await currency_converter.fetch_exchange_rate("2023-04-27", "USD")
+
 
 
 @pytest.mark.asyncio
