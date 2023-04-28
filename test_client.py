@@ -1,13 +1,12 @@
-import pytest
 import asyncio
-import json
-from unittest.mock import patch, MagicMock
 from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, patch
+
+import pytest
+from aiohttp import ClientWebSocketResponse, WSMsgType
+from pytest_mock import MockerFixture
 
 from currency_ws_client import CurrencyWebSocketClient, Payload
-from unittest.mock import AsyncMock
-from pytest_mock import MockerFixture
-from aiohttp import ClientWebSocketResponse, WSMsgType
 
 
 @pytest.mark.asyncio

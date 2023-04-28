@@ -1,22 +1,15 @@
-import pytest
-import asyncio
+
 import json
-from unittest.mock import patch
-from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from aioresponses import aioresponses
+from pytest_mock import MockerFixture
 
 from currency_converter import CurrencyConverter, JsonResponse
 from currency_ws_client import CurrencyWebSocketClient
-from unittest.mock import AsyncMock
-from pytest_mock import MockerFixture
-from aiohttp import ClientWebSocketResponse
-
-import httpretty
-from aioresponses import aioresponses
-import unittest
-import asyncio
-from unittest.mock import MagicMock
-from aiohttp import ClientResponse
-from currency_converter import CurrencyConverter, JsonResponse
+from aiohttp import ClientSession, ClientWebSocketResponse
 
 
 @pytest.fixture

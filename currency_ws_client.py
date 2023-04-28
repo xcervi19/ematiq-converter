@@ -1,10 +1,12 @@
 import asyncio
 import json
+import logging
 from datetime import datetime, timedelta
 from aiohttp import ClientSession, ClientWebSocketResponse, WSMsgType
 from typing import TypedDict, cast
 from currency_converter import CurrencyConverter
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Payload(TypedDict):
     marketId: int
@@ -49,7 +51,7 @@ class CurrencyWebSocketClient:
     async def read_messages(self, websocket: ClientWebSocketResponse) -> None:
         async for msg in websocket:
             if msg.type == WSMsgType.TEXT:
-                print(msg.data)
+                logging.info(msg.data)
                 msg_data = json.loads(msg.data)
                 if msg_data == {"type": "heartbeat"}:
                     self.last_heartbeat_received = datetime.now()
@@ -97,5 +99,5 @@ class CurrencyWebSocketClient:
                                 raise cast(BaseException, exception)
 
                 except Exception as e:
-                    print(f"WebSocket connection failed: {e}. Retrying in 1 second...")
+                    logging.error(f"WebSocket connection failed: {e}. Retrying in 1 second...")
                     await asyncio.sleep(1)

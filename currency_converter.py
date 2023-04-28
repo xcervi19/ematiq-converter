@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import json
 from locale import currency
 from typing import Dict
@@ -6,6 +7,7 @@ from datetime import datetime, timedelta
 from aiohttp import ClientSession, ClientWebSocketResponse
 from typing import TypedDict
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class JsonResponse(TypedDict):
     motd: dict[str, str]
@@ -41,7 +43,7 @@ class CurrencyConverter:
             ) as response:
                 if response.status == 200:
                     json_response: JsonResponse = await response.json()
-                    print(json_response)
+                    logging.info(json_response)
                     if json_response["success"]:
                         rates = json_response["rates"]
                         if date not in self.currency_cache:
@@ -77,5 +79,5 @@ class CurrencyConverter:
                     "id": data["id"],
                     "message": f"Unable to convert stake. Error: {str(e)}",
                 }
-            print(json.dumps(data))
+            logging.info(json.dumps(data))
             await websocket.send_str(json.dumps(data))
