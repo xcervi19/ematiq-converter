@@ -59,14 +59,12 @@ async def test_fetch_exchange_rate(currency_converter, api_response):
 
 @pytest.mark.asyncio
 async def test_process_message(mocker: MockerFixture) -> None:
-    # Mock websocket and its send_str method
     class MockWebsocket:
         async def send_str(self, msg):
             self.sent_msg = msg
 
     websocket = MockWebsocket()
 
-    # Mock fetch_exchange_rate function
     async def mock_fetch_exchange_rate(date, currency):
         return 1.222385
 
@@ -77,7 +75,6 @@ async def test_process_message(mocker: MockerFixture) -> None:
         AsyncMock(side_effect=mock_fetch_exchange_rate),
     )
 
-    # Sample message to process
     message = json.dumps(
         {
             "type": "message",
@@ -94,7 +91,7 @@ async def test_process_message(mocker: MockerFixture) -> None:
     )
 
     websocket_client = CurrencyWebSocketClient()
-    # Replace the original CurrencyConverter instance with the mocked one
+
     websocket_client.currency_converter = converter
     await websocket_client.currency_converter.process_message(websocket, message)
 

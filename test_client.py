@@ -40,8 +40,6 @@ async def test_send_heartbeat():
 
     mock_websocket.send_str.assert_called_once_with('{"type":"heartbeat"}')
 
-
-# Custom class for mocking the websocket messages
 class MockWebSocket:
     def __init__(self, messages):
         self.messages = messages
@@ -82,7 +80,6 @@ async def test_read_messages_other_msg():
 async def test_websocket_handler(mocker: MockerFixture):
     client = CurrencyWebSocketClient()
 
-    # Mock the read_messages method to raise an exception
     mocker.patch.object(
         client, "read_messages", side_effect=Exception("Test exception")
     )

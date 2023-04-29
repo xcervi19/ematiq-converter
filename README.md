@@ -2,6 +2,16 @@
 
 The Ematiq Currency Conversion Application is a small, nice, and compact Python application that implements a solution for currency conversion using a WebSocket connection. This application listens for messages from a server, converts the currency of the received messages, and sends the converted data back to the server.
 
+## TO DO
+```
+test_client.py::test_websocket_handler
+  /opt/anaconda3/envs/ematiq/lib/python3.11/selectors.py:72: RuntimeWarning: coroutine 'CurrencyConverter.process_message' was never awaited
+    return self._selector._fd_to_key[fd]
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+```
 ## Technical Stack
 
 - Python 3.11
