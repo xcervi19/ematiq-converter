@@ -26,10 +26,12 @@ class JsonResponse(TypedDict):
 class CurrencyWebSocketClient:
     CURRENCY_CACHE_DURATION = timedelta(hours=2)
     WEBSOCKET_URL = "wss://currency-assignment.ematiq.com"
+    # WEBSOCKET_URL = "ws://localhost:8080/websocket"
 
     def __init__(self):
         self.currency_converter = CurrencyConverter()
         self.last_heartbeat_received = datetime.now()
+        self.heartbeat_received_event = asyncio.Event()
 
     async def heartbeat(self, websocket: ClientWebSocketResponse) -> None:
         while True:
@@ -42,11 +44,18 @@ class CurrencyWebSocketClient:
 
     async def heartbeat_checker(self) -> None:
         while True:
-            time_since_last_heartbeat = datetime.now() - self.last_heartbeat_received
-            if time_since_last_heartbeat > timedelta(seconds=2):
-                self.last_heartbeat_received = datetime.now()
+            await self.heartbeat_received_event.wait()
+            self.heartbeat_received_event.clear()
+            now = datetime.now()
+            next_heartbeat_due = self.last_heartbeat_received + timedelta(seconds=2)
+            sleep_duration = (next_heartbeat_due - now).total_seconds()
+            
+            if sleep_duration > 0:
+                await asyncio.sleep(sleep_duration)
+            
+            now = datetime.now()
+            if (now - self.last_heartbeat_received) > timedelta(seconds=2):
                 raise Exception("No heartbeat received for 2 seconds.")
-            await asyncio.sleep(0.0001)
 
     async def read_messages(self, websocket: ClientWebSocketResponse) -> None:
         async for msg in websocket:
@@ -55,10 +64,12 @@ class CurrencyWebSocketClient:
                 msg_data = json.loads(msg.data)
                 if msg_data == {"type": "heartbeat"}:
                     self.last_heartbeat_received = datetime.now()
+                    self.heartbeat_received_event.set()
                 else:
                     asyncio.create_task(
                         self.currency_converter.process_message(websocket, msg.data)
                     )
+
 
     async def websocket_handler(self) -> None:
         async with ClientSession() as session:

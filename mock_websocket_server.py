@@ -13,7 +13,7 @@ async def mock_websocket_handler(request):
             await ws.send_str('{"type": "heartbeat"}')
             if i%5 == 0:
                 print(i)
-                await asyncio.sleep(2.001) 
+                await asyncio.sleep(2) 
             else:
                 await asyncio.sleep(1)
 
