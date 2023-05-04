@@ -40,6 +40,7 @@ async def test_send_heartbeat():
 
     mock_websocket.send_str.assert_called_once_with('{"type":"heartbeat"}')
 
+
 class MockWebSocket:
     def __init__(self, messages):
         self.messages = messages

@@ -6,7 +6,10 @@ from aiohttp import ClientSession, ClientWebSocketResponse, WSMsgType
 from typing import TypedDict, cast
 from currency_converter import CurrencyConverter
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 class Payload(TypedDict):
     marketId: int
@@ -49,10 +52,10 @@ class CurrencyWebSocketClient:
             now = datetime.now()
             next_heartbeat_due = self.last_heartbeat_received + timedelta(seconds=2)
             sleep_duration = (next_heartbeat_due - now).total_seconds()
-            
+
             if sleep_duration > 0:
                 await asyncio.sleep(sleep_duration)
-            
+
             now = datetime.now()
             if (now - self.last_heartbeat_received) > timedelta(seconds=2):
                 raise Exception("No heartbeat received for 2 seconds.")
@@ -69,7 +72,6 @@ class CurrencyWebSocketClient:
                     asyncio.create_task(
                         self.currency_converter.process_message(websocket, msg.data)
                     )
-
 
     async def websocket_handler(self) -> None:
         async with ClientSession() as session:
@@ -110,5 +112,7 @@ class CurrencyWebSocketClient:
                                 raise cast(BaseException, exception)
 
                 except Exception as e:
-                    logging.error(f"WebSocket connection failed: {e}. Retrying in 1 second...")
+                    logging.error(
+                        f"WebSocket connection failed: {e}. Retrying in 1 second..."
+                    )
                     await asyncio.sleep(1)
