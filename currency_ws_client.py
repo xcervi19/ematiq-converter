@@ -29,7 +29,6 @@ class JsonResponse(TypedDict):
 class CurrencyWebSocketClient:
     CURRENCY_CACHE_DURATION = timedelta(hours=2)
     WEBSOCKET_URL = "wss://currency-assignment.ematiq.com"
-    # WEBSOCKET_URL = "ws://localhost:8080/websocket"
 
     def __init__(self):
         self.currency_converter = CurrencyConverter()
