@@ -54,6 +54,7 @@ class CurrencyConverter:
 
     async def fetch_exchange_rate(self, date: str, currency: str) -> float:
         if self.is_rate_cached(date, currency):
+            logging.info(f"Cache hit: {date}, {currency} = {self.currency_cache[date][currency]}")
             return self.currency_cache[date][currency]
 
         rates = await self.fetch_rates_from_api(date)
@@ -77,6 +78,7 @@ class CurrencyConverter:
                 if response.status == 200:
                     json_response: JsonResponse = await response.json()
                     logging.info(json_response)
+                    logging.info(f"{self.EXCHANGE_RATE_API}/{date}?base={self.CURRENCY}")
                     if json_response["success"]:
                         return json_response["rates"]
                     else:
@@ -95,6 +97,7 @@ class CurrencyConverter:
             self.currency_cache_expiration[date] = (
                 datetime.now() + self.CURRENCY_CACHE_DURATION
             )
+        logging.info(f"Cache set: {date}")
         self.currency_cache[date].update(rates)
 
     def schedule_cache_cleanup(self, date: str) -> None:
@@ -109,5 +112,5 @@ class CurrencyConverter:
         if date in self.currency_cache_expiration:
             del self.currency_cache_expiration[date]
         logging.info(
-            f"For key 12, the cleaning process was executed; cache keys:{self.currency_cache_expiration.keys()}"
+            f"For key {date}, the cleaning process was executed"
         )

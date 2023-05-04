@@ -13,9 +13,9 @@ async def mock_websocket_handler(request):
             await ws.send_str('{"type": "heartbeat"}')
             if i % 5 == 0:
                 print(i)
-                await asyncio.sleep(2)
+                await asyncio.sleep(2.01)
             else:
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.1)
 
     heartbeat_task = asyncio.create_task(send_heartbeat())
 
