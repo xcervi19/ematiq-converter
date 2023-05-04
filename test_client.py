@@ -18,6 +18,7 @@ async def test_heartbeat_checker():
         client = CurrencyWebSocketClient()
         client.last_heartbeat_received = now
 
+        client.heartbeat_received_event.set()
         mock_datetime.now.return_value = now + timedelta(seconds=1)
 
         try:
@@ -25,6 +26,8 @@ async def test_heartbeat_checker():
         except asyncio.TimeoutError:
             pass
 
+        client.heartbeat_received_event.clear()
+        client.heartbeat_received_event.set()
         mock_datetime.now.return_value = now + timedelta(seconds=2.1)
 
         with pytest.raises(Exception):
